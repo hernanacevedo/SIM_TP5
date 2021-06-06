@@ -1,0 +1,175 @@
+/*
+
+*/
+
+body {
+    margin: 0px; padding: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+.grid-container {
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+    grid-template-columns: 20% 30% 50%;
+    grid-template-rows: 10% 20% 70%;
+
+}
+
+.header {
+    position: relative;
+    grid-column: 1 / 4;
+    grid-row: 1 / 2;
+    background-color: #cc99ff;
+    padding: none;
+}
+
+#app_name {
+    position: relative;
+    float: left;
+    display: inline-block;
+
+    margin-left: 2%;
+    margin-top: 1%;
+
+    color: white;
+}
+
+.options {
+    position: relative;
+    grid-column: 1 / 4;
+    grid-row: 2 / 3;
+    background-color: transparent;
+    padding: none;
+
+    transition-duration: 0.4s;
+    box-shadow: 0px 10px 15px -8px transparent;
+
+    z-index: 2;
+}
+
+.display {
+    position: relative;
+    grid-column: 1 / 4;
+    grid-row: 3 / 4;
+    background-color: transparent;
+    padding: none;
+
+    overflow-y: auto;
+}
+
+.parameter {
+    position: relative;
+    float: left;
+    display: inline-block;
+
+    margin-left: 2%;
+    margin-top: 2%;
+
+}
+.inp {
+    border: none;
+    border-bottom: 2px solid gray;
+}
+
+#calculate {
+    position: relative;
+    float: left;
+    display: inline-block;
+
+    width: auto;
+    height: auto;
+
+    font-weight: bold;
+
+    border: 2px solid #00cc00;
+    border-radius: 4px;
+    background-color: white;
+    color: #00cc00;
+
+    margin-left: 2%;
+    margin-top: 2%;
+
+    transition-duration: 0.4s;
+}
+#calculate:hover {
+    background-color: #00cc00;
+    color: white;
+}
+
+#conn_options {
+    position relative;
+    float: left;
+    display: inline-block;
+
+    width: 15%;
+    height: auto;
+
+    margin-left: 2%;
+    margin-top: 2%;
+
+}
+
+#conn_state {
+    position: relative;
+    float: left;
+    display: inline-block;
+
+    width: auto;
+    height: auto;
+
+    font-size: 100%;
+    font-weight: bold;
+
+    background-color: transparent;
+    border: none;
+    color: green;
+
+    margin-left: 2%;
+
+}
+
+#ws_test {
+    position: relative;
+    float: left;
+    display: inline-block;
+
+    width: auto;
+    height: auto;
+
+    font-weight: bold;
+
+    border: 2px solid black;
+    border-radius: 4px;
+    background-color: white;
+    color: black;
+
+    transition-duration: 0.4s;
+}
+#ws_test:hover {
+    background-color: black;
+    color: white;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+table {
+    width: 100%;
+    text-align: center;
+}
+tr:nth-child(odd) {
+    background-color: #eeffcc;
+}
+#table_header {
+    background-color: transparent;
+}
+
+#result_tag {
+
+    color: green;
+}
+#result_value {
+    color: green;
+}

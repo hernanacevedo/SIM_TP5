@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="index.js"></script>
+    <link rel="stylesheet" href="index.css">
+    <title>TP1 | Sim 4K4</title>
+</head>
+<body>
+<div class="grid-container">
+
+    <div class="header">
+        <h1 id="app_name">SIM TP4 - Colas</h1>
+    </div>
+
+    <div class="options">
+        <div class="parameter" id="x">Días a simular: <input class="inp" id="inp_x" value="100" type="number"></div>
+        <div class="parameter" id="N">Filas a obtener: <input class="inp" id="inp_N" value="" type="number"></div>
+        <div class="parameter" id="i">Mostrar desde: <input class="inp" id="inp_i" value="200" type="number"></div>
+        <div class="parameter" id="j">Mostrar hasta: <input class="inp" id="inp_j" value="300" type="number"></div>
+
+        <button id="calculate">CALCULAR</button>
+
+        <div id="conn_options">
+            <button id="ws_test" title="testear conexión">conectar</button>
+            <div id="conn_state" title="chequear conexión">...reconectando</div>
+        </div>
+
+        <div id="shadow"></div>
+    </div>
+
+    <div class="display">
+         <table id="result_table">
+             <tr id="table_header">
+                 <th colspan="3">Eventos</th>
+                 <th colspan="5">llegada_auto</th>
+                 <th rowspan="2">Cambio de semáforo</th>
+                 <th colspan="4">fin_verde</th>
+                 <th colspan="2">Fin amarillo</th>
+                 <th colspan="3">Tiempo de cruce(S1)</th>
+                 <th colspan="3">Tiempo de cruce(S2)</th>
+                 <th colspan="3">S1(Colón)</th>
+                 <th colspan="3">S1(Urquiza)</th>
+                 <th rowspan="2">Ac tiempo de permanencia</th>
+                 <th rowspan="2">Q autos que pasaron por colon</th>
+                 <th rowspan="2">Q max de autos que tuvieron que esperar</th>
+                 <th rowspan="2">Q max de autos que pasaron en una pasada</th>
+                 <th colspan="3">Vehiculo 1</th>
+             </tr>
+             <tr>
+                 <th>Evento</th>
+                 <th>Hora</th>
+                 <th>Día</th>
+
+                 <th>RND</th>
+                 <th>Calle</th>
+                 <th>RND</th>
+                 <th>Tiempo</th>
+                 <th>Proxima llegada</th>
+
+                 <th>inicio(S1)</th>
+                 <th>fin(S1)</th>
+                 <th>inicio(S2)</th>
+                 <th>fin(S2)</th>
+
+                 <th>S1</th>
+                 <th>S2</th>
+
+                 <th>RND</th>
+                 <th>Tiempo</th>
+                 <th>Fin de cruce</th>
+
+                 <th>RND</th>
+                 <th>Tiempo</th>
+                 <th>Fin de cruce</th>
+
+                 <th>Estado</th>
+                 <th>Color</th>
+                 <th>Cola</th>
+
+                 <th>Estado</th>
+                 <th>Color</th>
+                 <th>Cola</th>
+
+                 <th>Estado</th>
+                 <th>Calle</th>
+                 <th>ini_espera</th>
+             </tr>
+        </table>
+    </div>
+
+
+</div>
+</body>
+</html>
