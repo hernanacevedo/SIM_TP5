@@ -70,14 +70,15 @@ $(document).ready(function(){
             //data = JSON.stringify(data)
 
             //var result = data[0].toFixed(2);
-            var tabla = data;
+            var tabla = data[1];
+            var resultados = data[0]
             console.log(event.data);
 
             // Resetear la tabla
             empty_table = `<table id="result_table">
              <tr id="table_header">
-                 <th colspan="3" rowspan="1">Resultado:</th>
-                 <th colspan="4" rowspan="2">llegada_auto</th>
+                 <th colspan="3" rowspan="1">Promedio permanencia: ${resultados.promedio}</th>
+                 <th colspan="4" rowspan="1">Filas simuladas: ${resultados.filas}</th>
                  <th colspan="3" rowspan="2">inicio_verde</th>
                  <th colspan="3" rowspan="2">Cruce</th>
                  <th colspan="1" rowspan="3">Infraccion</th>
@@ -86,11 +87,13 @@ $(document).ready(function(){
                  <th colspan="1" rowspan="3">Cantidad max que tuvieron que esperar</th>
                  <th colspan="1" rowspan="3">Ac de pasadas</th>
                  <th colspan="1" rowspan="3">Cantidad max que cruzaron en una pasada</th>
+                 <th colspan="1" rowspan="3">Ac autos</th>
                  <th colspan="6" rowspan="1">Semaforos</th>
                  <th colspan="18" rowspan="1">Autos</th>
              </tr>
              <tr>
                 <th colspan="3" rowspan="1">Eventos</th>
+                <th colspan="4" rowspan="1">llegada_auto</th>
                 <th colspan="3" rowspan="1">S1(Colón)</th>
                  <th colspan="3" rowspan="1">S2(Urquiza)</th>
                  <th colspan="3" rowspan="1">Auto 1</th>
@@ -186,6 +189,7 @@ $(document).ready(function(){
                          <td>${row_data.q_max_en_espera}</td>
                          <td>${row_data.ac_pasada}</td>
                          <td>${row_data.q_max_en_una_pasada}</td>
+                         <td >${row_data.ac_autos}</td>
                          <td>${row_data.semaforos.s1.estado}</td>
                          <td>${row_data.semaforos.s1.color}</td>
                          <td>${row_data.semaforos.s1.cola}</td>
@@ -222,11 +226,11 @@ $(document).ready(function(){
                 $("#result_table").append(new_row);
 
                 // Destacar ultima linea
-                //if(i == tabla.length - 2) {
-                //    html = '<tr><td colspan="12" id="last_line">-- ULTIMA LINEA --</td></tr>'
-                //    $("#result_table").append(html);
-                //    $("#last_line").css({"background-color":"green", "color":"white"});
-                //}
+                if(i == tabla.length - 2) {
+                    html = '<tr><td colspan="45" id="last_line">-- ULTIMA LINEA --</td></tr>'
+                    $("#result_table").append(html);
+                    $("#last_line").css({"background-color":"green", "color":"white"});
+                }
             }
 
         }
@@ -273,7 +277,7 @@ $(document).ready(function(){
             $("#inp_x").css({"border-color":"gray"});
         }
 
-        if($("#inp_i").val() <= 0 || $("#inp_i").val() > $("#inp_x").val() - 1) {
+        if($("#inp_i").val() < 0 || $("#inp_i").val() > $("#inp_x").val() - 1) {
             $("#inp_i").css({"border-color":"red"});
         } else {
             $("#inp_i").css({"border-color":"gray"});

@@ -168,10 +168,37 @@ def completar_simulacion(experimento):
     return experimento
 
 
-def obtener_proxima_llegada(rnd, calle, hora):
-    """"""
+def generarDistribucionNormal(media, desviacion):
+        Z=round(
+            (
+            (
+                (random.random()+random.random()+random.random()+random.random()+ random.random()+random.random()+
+                random.random()+random.random()+random.random()+random.random()+random.random()+random.random())
+            - 6 ) * desviacion) + media
+        , 1)
 
-    return "00:00:15"
+        return abs(Z)
+
+
+
+def obtener_proxima_llegada(semaforo, hora):
+    """"""
+    calle = int(semaforo[-1])
+    horaActual = hora.split(":")
+    horaActual = int(horaActual[0])
+
+    if calle == 2 and horaActual >= 8 and horaActual <= 10:
+        tiempo_entre_lleg = generarDistribucionNormal(1, 1)
+
+    elif calle == 1 and horaActual >= 8 and horaActual < 9:
+        tiempo_entre_lleg = generarDistribucionNormal(3, 1)
+
+    else:
+        tiempo_entre_lleg = generarDistribucionNormal(2, 0.5)
+
+    tiempo = "00:00:"+str(int(tiempo_entre_lleg))
+
+    return tiempo_entre_lleg, tiempo
 
 
 def obtener_semaforo(rnd):
@@ -188,12 +215,16 @@ def obtener_semaforo(rnd):
 def simular_llegada_auto(experimento):
     """"""
     hora = experimento["eventos"]["hora"]
-    rnd = random.random()
-    semaforo = obtener_semaforo(rnd)
-    tiempo_entre_llegadas = obtener_proxima_llegada(rnd, semaforo, hora)
+    rnd_c = random.random()
+    semaforo = obtener_semaforo(rnd_c)
+
+    rnd_t, tiempo_entre_llegadas = obtener_proxima_llegada(semaforo, hora)
     proxima_llegada = sumar_hora(hora, tiempo_entre_llegadas)
 
     experimento["llegada_auto"]["proxima_llegada"] = proxima_llegada
+
+    experimento["llegada_auto"]["rnd_calle"] = round(rnd_c, 2)
+    experimento["llegada_auto"]["rnd_tiempo"] = round(rnd_t, 2)
 
     # Se agrega el auto que llegó a la cola, si no tiene que esperar, se lo va a hacer pasar y en el vector final a
     # mostrar, no se habrá incrementado la cola
@@ -205,6 +236,10 @@ def simular_llegada_auto(experimento):
         "estado": "E", "calle": calles[semaforo], "inicio_espera": hora
     }
     experimento["autos"].append(auto)
+
+    experimento["llegada_auto"]["calle"] = calles[semaforo]
+
+    experimento["ac_autos"] += 1
 
     return experimento
 
@@ -230,9 +265,23 @@ def hay_cruce(experimento):
         return False
 
 
+def obtener_tiempo_cruce(semaforo):
+    """"""
+    calle = int(semaforo[-1])
+
+    if calle == 1:
+        tiempo_entre_lleg= generarDistribucionNormal(4, 1)
+
+    else:
+        tiempo_entre_lleg = generarDistribucionNormal(3, 0.5)
+
+    tiempo = "00:00:"+str(int(tiempo_entre_lleg))
+
+    return tiempo_entre_lleg, tiempo
+
+
 def simular_cruce(experimento, semaforo):
-    rnd = random.random()
-    tiempo = "00:00:2" # -> esto debe calcularse
+    rnd, tiempo = obtener_tiempo_cruce(semaforo)
     fin_cruce = sumar_hora(experimento["eventos"]["hora"], tiempo)
 
     experimento["cruce"]["rnd"] = rnd
@@ -243,11 +292,18 @@ def simular_cruce(experimento, semaforo):
     if comparar_horas(fin_cruce, experimento["inicio_verde"]["fin_amarillo"]) == "mayor":
         experimento["infraccion"] = "si"
         experimento["ac_infracciones"] += 1
+    else:
+        experimento["infraccion"] = ""
+
+    if semaforo == 1:
+        m = 3
+    else:
+        m = 4
 
     # Determinar cantidad de autos a cruzar
     cola = experimento["semaforos"][semaforo]["cola"]
-    if cola >= 3:
-        q = 3
+    if cola >= m:
+        q = m
     else:
         q = cola
 
@@ -260,6 +316,7 @@ def simular_cruce(experimento, semaforo):
         espera = restar_horas(experimento["eventos"]["hora"], experimento["autos"][i]["inicio_espera"])
 
         experimento["ac_espera"] = sumar_hora(experimento["ac_espera"], espera)
+        experimento["ac_espera"] = sumar_hora(experimento["ac_espera"], tiempo)
 
         if comparar_horas(experimento["eventos"]["hora"], experimento["autos"][i]["inicio_espera"]) == "mayor":
             experimento["q_max_en_espera"] += 1
@@ -295,6 +352,40 @@ def completar_linea(experimento):
 
     return linea
 
+
+def limpiar_experimento(experimento):
+    """"""
+    experimento["cruce"]["rnd"] = ""
+    experimento["cruce"]["tiempo"] = ""
+    experimento["cruce"]["fin_cruce"] = ""
+
+    return experimento
+
+
+def calcular_promedio_espera(experimento):
+    """"""
+    ac_espera = experimento["ac_espera"]
+
+    # Transformar a segundos
+    ac_espera = ac_espera.split(":")
+    h = int(ac_espera[0])
+    m = int(ac_espera[1])
+    s = int(ac_espera[2])
+    ac_espera = h*60*60 + m*60 + s
+
+    n = int(ac_espera/experimento["ac_autos"])
+
+    # Transformar nuevamente a formato hora
+    s = n % 60
+    m = n // 60
+    m = m % 60
+    h = n // (60*60)
+    h = h % (60*60)
+
+    tiempo = str(h)+":"+str(m)+":"+str(s)
+
+    return tiempo
+
 def simular(dias, j, k):
     """
     """
@@ -324,6 +415,7 @@ def simular(dias, j, k):
         "q_max_en_espera": 0,
         "ac_pasada": 0,
         "q_max_en_una_pasada": 0,
+        "ac_autos": 0,
         "autos": []
     }
 
@@ -336,6 +428,7 @@ def simular(dias, j, k):
 
     experimento = simular_evento["llegada_auto"](experimento)
 
+    completado = 0
     contador = 0
     while comparar_horas(experimento["eventos"]["hora"], "10:00:00") != "mayor":
         # Buscar evento actual, sino habilitar un semaforo
@@ -345,6 +438,9 @@ def simular(dias, j, k):
 
         # Borrar autos que ya han pasado
         experimento = limpiar_objetos(experimento)
+
+        # Restablecer valores no necesarios del vector
+        experimento = limpiar_experimento(experimento)
 
         # Simular evento y actualizar vector
         experimento["eventos"]["hora"] = t
@@ -366,9 +462,24 @@ def simular(dias, j, k):
         if int(experimento["eventos"]["dia"]) > int(dias):
             break
 
-        completado = (experimento["eventos"]["dia"]/dias)*100
-        print("COMPLETADO:", round(completado), "%")
+        if round((experimento["eventos"]["dia"]/dias)*100) > completado:
+            print("COMPLETADO:", round(completado), "%")
+        completado = round((experimento["eventos"]["dia"]/dias)*100)
 
+    print(round(completado))
 
-    return tabla
+    # Agregar ultima fila
+    linea = completar_linea(experimento)
+    tabla.append(copy.deepcopy(linea))
+
+    promedio = calcular_promedio_espera(experimento)
+
+    resultados = {
+        "promedio": promedio,
+        "filas": contador
+    }
+
+    resultado = [resultados, tabla]
+
+    return resultado
 
