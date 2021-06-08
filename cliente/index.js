@@ -63,79 +63,170 @@ $(document).ready(function(){
             show_connected();
         }
 
-        // calcular_montecarlo
+        // calcular_simulacion
         if(event.data != "OK") {
-            console.log(event.data);
             // Obtener datos
             var data = JSON.parse(event.data);
-            //console.log(data);
+            //data = JSON.stringify(data)
 
-            var result = data[0].toFixed(2);
-            var tabla = data[1];
+            //var result = data[0].toFixed(2);
+            var tabla = data;
+            console.log(event.data);
 
             // Resetear la tabla
             empty_table = `<table id="result_table">
-                 <tr id="table_header">
-                     <th rowspan="2">n Proyecto</th>
-                     <th colspan="2">A</th>
-                     <th colspan="2">B</th>
-                     <th colspan="2">C</th>
-                     <th colspan="2">D</th>
-                     <th colspan="3" id="result_tag">Resultado: -</th>
-                 </tr>
-                 <tr>
-                     <th>RND</th>
-                     <th>Semana</th>
-                     <th>RND</th>
-                     <th>Semana</th>
-                     <th>RND</th>
-                     <th>Semana</th>
-                     <th>RND</th>
-                     <th>Semana</th>
+             <tr id="table_header">
+                 <th colspan="3" rowspan="1">Resultado:</th>
+                 <th colspan="4" rowspan="2">llegada_auto</th>
+                 <th colspan="3" rowspan="2">inicio_verde</th>
+                 <th colspan="3" rowspan="2">Cruce</th>
+                 <th colspan="1" rowspan="3">Infraccion</th>
+                 <th colspan="1" rowspan="3">Ac infracciones</th>
+                 <th colspan="1" rowspan="3">Cantidad que pasaron por Colon</th>
+                 <th colspan="1" rowspan="3">Cantidad max que tuvieron que esperar</th>
+                 <th colspan="1" rowspan="3">Ac de pasadas</th>
+                 <th colspan="1" rowspan="3">Cantidad max que cruzaron en una pasada</th>
+                 <th colspan="6" rowspan="1">Semaforos</th>
+                 <th colspan="18" rowspan="1">Autos</th>
+             </tr>
+             <tr>
+                <th colspan="3" rowspan="1">Eventos</th>
+                <th colspan="3" rowspan="1">S1(Colón)</th>
+                 <th colspan="3" rowspan="1">S2(Urquiza)</th>
+                 <th colspan="3" rowspan="1">Auto 1</th>
+                 <th colspan="3" rowspan="1">Auto 2</th>
+                 <th colspan="3" rowspan="1">Auto 3</th>
+                 <th colspan="3" rowspan="1">Auto 4</th>
+                 <th colspan="3" rowspan="1">Auto 5</th>
+                 <th colspan="3" rowspan="1">Auto N</th>
 
-                     <th>Total</th>
-                     <th>Exito</th>
-                     <th>Exitos acumulados</th>
-                 </tr>
-            </table>`
+             </tr>
+             <tr>
+
+                <th>Evento</th>
+                 <th>Hora</th>
+                 <th>Dia</th>
+
+                 <th>RND</th>
+                 <th>Calle</th>
+                 <th>RND</th>
+                 <th>Proxima llegada</th>
+
+                 <th>Fin_verde</th>
+                 <th>Fin_amarillo</th>
+                 <th>Proximo</th>
+
+                 <th>RND</th>
+                 <th>Tiempo</th>
+                 <th>Fin cruce</th>
+
+                 <th>Estado</th>
+                 <th>Color</th>
+                 <th>Cola</th>
+
+                 <th>Estado</th>
+                 <th>Color</th>
+                 <th>Cola</th>
+
+                 <th>Estado</th>
+                 <th>Calle</th>
+                 <th>Inicio espera</th>
+
+                 <th>Estado</th>
+                 <th>Calle</th>
+                 <th>Inicio espera</th>
+
+                 <th>Estado</th>
+                 <th>Calle</th>
+                 <th>Inicio espera</th>
+
+                 <th>Estado</th>
+                 <th>Calle</th>
+                 <th>Inicio espera</th>
+
+                 <th>Estado</th>
+                 <th>Calle</th>
+                 <th>Inicio espera</th>
+
+                 <th>Estado</th>
+                 <th>Calle</th>
+                 <th>Inicio espera</th>
+
+
+             </tr>
+        </table>`
             $("#result_table").html(empty_table);
 
-            $("#result_tag").text("Resultado: "+result+"%");
+            //$("#result_tag").text("Resultado: "+result+"%");
 
             // Dibujar tabla
             var i;
             for(i=0; i<tabla.length; i++) {
                 row_data = tabla[i];
 
-                // Traducir exitos de 0,1 a NO,SI
-                if (row_data[10] == 0){
-                    row_data[10] = "NO"
-                } else {
-                    row_data[10] = "SI"
-                }
+                console.log(row_data.autos)
 
                 new_row = `<tr>
-                         <td>${row_data[0]}</td>
-                         <td>${row_data[1]}</td>
-                         <td>${row_data[2]}</td>
-                         <td>${row_data[3]}</td>
-                         <td>${row_data[4]}</td>
-                         <td>${row_data[5]}</td>
-                         <td>${row_data[6]}</td>
-                         <td>${row_data[7]}</td>
-                         <td>${row_data[8]}</td>
-                         <td>${row_data[9]}</td>
-                         <td>${row_data[10]}</td>
-                         <td>${row_data[11]}</td>
+                         <td>${row_data.eventos.evento}</td>
+                         <td>${row_data.eventos.hora}</td>
+                         <td>${String(row_data.eventos.dia)}</td>
+                         <td>${row_data.llegada_auto.rnd_calle}</td>
+                         <td>${row_data.llegada_auto.calle}</td>
+                         <td>${row_data.llegada_auto.rnd_tiempo}</td>
+                         <td>${row_data.llegada_auto.proxima_llegada}</td>
+                         <td>${row_data.inicio_verde.fin_verde}</td>
+                         <td>${row_data.inicio_verde.fin_amarillo}</td>
+                         <td>${row_data.inicio_verde.proximo}</td>
+                         <td>${row_data.cruce.rnd}</td>
+                         <td>${row_data.cruce.tiempo}</td>
+                         <td>${row_data.cruce.fin_cruce}</td>
+                         <td>${row_data.infraccion}</td>
+                         <td>${row_data.ac_infracciones}</td>
+                         <td>${row_data.q_autos_por_colon}</td>
+                         <td>${row_data.q_max_en_espera}</td>
+                         <td>${row_data.ac_pasada}</td>
+                         <td>${row_data.q_max_en_una_pasada}</td>
+                         <td>${row_data.semaforos.s1.estado}</td>
+                         <td>${row_data.semaforos.s1.color}</td>
+                         <td>${row_data.semaforos.s1.cola}</td>
+                         <td>${row_data.semaforos.s2.estado}</td>
+                         <td>${row_data.semaforos.s2.color}</td>
+                         <td>${row_data.semaforos.s2.cola}</td>
+
+                         <td>${row_data.autos[0].estado}</td>
+                         <td>${row_data.autos[0].calle}</td>
+                         <td>${row_data.autos[0].inicio_espera}</td>
+
+                         <td>${row_data.autos[1].estado}</td>
+                         <td>${row_data.autos[1].calle}</td>
+                         <td>${row_data.autos[1].inicio_espera}</td>
+
+                         <td>${row_data.autos[2].estado}</td>
+                         <td>${row_data.autos[2].calle}</td>
+                         <td>${row_data.autos[2].inicio_espera}</td>
+
+                         <td>${row_data.autos[3].estado}</td>
+                         <td>${row_data.autos[3].calle}</td>
+                         <td>${row_data.autos[3].inicio_espera}</td>
+
+                         <td>${row_data.autos[4].estado}</td>
+                         <td>${row_data.autos[4].calle}</td>
+                         <td>${row_data.autos[4].inicio_espera}</td>
+
+                         <td>${row_data.autos[5].estado}</td>
+                         <td>${row_data.autos[5].calle}</td>
+                         <td>${row_data.autos[5].inicio_espera}</td>
+
                 </tr>`;
+
                 $("#result_table").append(new_row);
 
                 // Destacar ultima linea
-                if(i == tabla.length - 2) {
-                    html = '<tr><td colspan="12" id="last_line">-- ULTIMA LINEA --</td></tr>'
-                    $("#result_table").append(html);
-                    $("#last_line").css({"background-color":"green", "color":"white"});
-                }
+                //if(i == tabla.length - 2) {
+                //    html = '<tr><td colspan="12" id="last_line">-- ULTIMA LINEA --</td></tr>'
+                //    $("#result_table").append(html);
+                //    $("#last_line").css({"background-color":"green", "color":"white"});
+                //}
             }
 
         }
@@ -149,17 +240,16 @@ $(document).ready(function(){
         socket.send(event);
     });
 
-    // Caclular montecarlo
+    // Caclular simulacion
     $("#calculate").click(function() {
-        console.log("[CALCULAR] Calcular montecarlo");
+        console.log("[CALCULAR] Calcular simulacion");
 
-        menos_de = Number($("#inp_restriction").val());
-        cantidad = Number($("#inp_N").val());
+        dias = Number($("#inp_x").val());
         desde = Number($("#inp_i").val());
         hasta = Number($("#inp_j").val());
 
-        parameters = [menos_de, cantidad, desde, hasta];
-        event = `{"event_name": "calcular_montecarlo", "parameters": [${menos_de}, ${cantidad}, ${desde}, ${hasta}]}`;
+        parameters = [dias, desde, hasta];
+        event = `{"event_name": "simular", "parameters": [${dias}, ${desde}, ${hasta}]}`;
         socket.send(event);
     });
 
@@ -177,17 +267,13 @@ $(document).ready(function(){
 
     // Validación en tiempo real de los datos
     $(window).keyup(function() {
-        if($("#inp_restriction").val() <= 0) {
-            $("#inp_restriction").css({"border-color":"red"});
+        if($("#inp_x").val() <= 0) {
+            $("#inp_x").css({"border-color":"red"});
         } else {
-            $("#inp_restriction").css({"border-color":"gray"});
+            $("#inp_x").css({"border-color":"gray"});
         }
-        if($("#inp_N").val() <= 0) {
-            $("#inp_N").css({"border-color":"red"});
-        } else {
-            $("#inp_N").css({"border-color":"gray"});
-        }
-        if($("#inp_i").val() <= 0 || $("#inp_i").val() > $("#inp_N").val() - 1) {
+
+        if($("#inp_i").val() <= 0 || $("#inp_i").val() > $("#inp_x").val() - 1) {
             $("#inp_i").css({"border-color":"red"});
         } else {
             $("#inp_i").css({"border-color":"gray"});
@@ -195,9 +281,9 @@ $(document).ready(function(){
         var dif = $("#inp_j").val() - $("#inp_i").val();
         var i = $("#inp_i").val();
         var j = $("#inp_j").val();
-        var N = $("#inp_N").val();
+        var x = $("#inp_x").val();
 
-        if(j <= 0 || dif < 0 || j > N) {
+        if(j <= 0 || dif < 0) {
             $("#inp_j").css({"border-color":"red"});
         } else {
             $("#inp_j").css({"border-color":"gray"});

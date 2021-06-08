@@ -41,10 +41,8 @@ async def server(websocket, path):
             # Codificar resultado a json
             encoded_result = json.dumps(result)
 
-            print(str(result))
-
             # Enviar respuesta al cliente
-            await websocket.send(str(result))
+            await websocket.send(encoded_result)
         else:
             raise Exception("[ERROR] el evento recibido no existe en el diccionario de eventos")
 

@@ -9,7 +9,7 @@
 """
 
 # IMPORTS #########################################################################################
-import negocio.montecarlo
+import negocio.simulacion
 import json
 ###################################################################################################
 
@@ -22,7 +22,7 @@ def ws_test(parameters):
     """
     return "OK"
 
-def calcular_montecarlo(parameters):
+def simulacion(parameters):
     """
         Recive una lista de parametros [lleven_menos_de, cantidad_proyectos, mostrar_desde, mostrar_hasta]
 
@@ -32,21 +32,17 @@ def calcular_montecarlo(parameters):
         ultima_fila_montecarlo es un vector
     """
 
-    menos_de = parameters[0]
-    cantidad = parameters[1]
-    desde = parameters[2]
-    hasta = parameters[3]
+    dias_a_simular = parameters[0]
+    desde = parameters[1]
+    hasta = parameters[2]
 
-    resultados = negocio.montecarlo.calcular(menos_de, cantidad, desde, hasta)
+    resultados = negocio.simulacion.simular(dias_a_simular, desde, hasta)
 
-    return str(resultados)
+    return resultados
 
 # Diccionario de eventos
 # -------------------------------------------------------------------------------------------------
 dictionary = {
     "ws-test": ws_test,
-    "calcular_montecarlo": calcular_montecarlo,
+    "simular": simulacion,
 }
-
-
-#hola
