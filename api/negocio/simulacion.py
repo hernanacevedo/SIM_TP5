@@ -37,12 +37,15 @@ def obtener_proximo_evento(experimento):
     """"""
     t_llegada_auto = experimento["llegada_auto"]["proxima_llegada"]
     t_cambio_de_semaforo = experimento["inicio_verde"]["fin_amarillo"]
+    t_fin_cruce = experimento["cruce"]["fin_cruce"]
 
     # Si no se simulo un tiempo para el evento, se le da un numero ridiculamente grade para siempre elegir el otro
     if t_llegada_auto == "":
         t_llegada_auto = "100:100:100"
     if t_cambio_de_semaforo == "":
         t_cambio_de_semaforo = "100:100:100"
+    if t_fin_cruce == "":
+        t_fin_cruce = "100:100:100"
 
     # Detectar si se debe pasar a un nuevo dia
     if comparar_horas(t_llegada_auto, "10:00:00") == "mayor" and \
@@ -50,6 +53,7 @@ def obtener_proximo_evento(experimento):
         experimento["eventos"]["dia"] += 1
         experimento["llegada_auto"]["proxima_llegada"] = restar_horas(t_llegada_auto, "02:00:00")
         experimento["inicio_verde"]["fin_amarillo"] = restar_horas(t_cambio_de_semaforo, "02:00:00")
+        experimento["cruce"]["fin_cruce"] = restar_horas(t_fin_cruce, "02:00:00")
         experimento["eventos"]["hora"] = "08:00:00"
 
         e, t = obtener_proximo_evento(experimento)
@@ -57,14 +61,17 @@ def obtener_proximo_evento(experimento):
 
     e = "llegada_auto"
     t = t_llegada_auto
-    if comparar_horas(t_llegada_auto, t_cambio_de_semaforo) == "menor":
+    if comparar_horas(t_llegada_auto, t_cambio_de_semaforo) == "menor"\
+                and comparar_horas(t_llegada_auto, t_fin_cruce) == "menor":
         e = "llegada_auto"
-    elif comparar_horas(t_llegada_auto, t_cambio_de_semaforo) == "mayor":
+        t = t_llegada_auto
+    elif comparar_horas(t_cambio_de_semaforo, t_fin_cruce) == "menor"\
+                and comparar_horas(t_cambio_de_semaforo, t_llegada_auto) == "menor":
         e = "inicio_verde"
         t = t_cambio_de_semaforo
-    elif comparar_horas(t_llegada_auto, t_cambio_de_semaforo) == "igual":
-        e = "inicio_verde"
-        t = t_cambio_de_semaforo
+    elif t_fin_cruce != "100:100:100":
+        e = "fin_cruce"
+        t = t_fin_cruce
 
     return e, t
 
@@ -162,7 +169,7 @@ def completar_simulacion(experimento):
         experimento["semaforos"][actual]["estado"] = "inhabilitado"
         experimento["semaforos"][actual]["color"] = "amarillo"
 
-    experimento["semaforos"][proximo]["estado"] = "inhabilitaado"
+    experimento["semaforos"][proximo]["estado"] = "inhabilitado"
     experimento["semaforos"][proximo]["color"] = "rojo"
 
     return experimento
@@ -253,13 +260,14 @@ def hay_cruce(experimento):
 
     hora_actual = experimento["eventos"]["hora"]
     fin_cruce = experimento["cruce"]["fin_cruce"]
+
     if fin_cruce != "":
         if not(comparar_horas(hora_actual, fin_cruce) == "mayor"):
             return False
 
     if cola_s1 > 0 and estado_s1 == "habilitado":
         return "s1"
-    elif cola_s2 > 0 and estado_s2 == "inhabilitado":
+    elif cola_s2 > 0 and estado_s2 == "habilitado":
         return "s2"
     else:
         return False
@@ -386,6 +394,15 @@ def calcular_promedio_espera(experimento):
 
     return tiempo
 
+
+def simular_fin_cruce(experimento):
+    """"""
+    experimento["cruce"]["rnd"] = ""
+    experimento["cruce"]["tiempo"] = ""
+    experimento["cruce"]["fin_cruce"] = ""
+
+    return experimento
+
 def simular(dias, j, k):
     """
     """
@@ -421,7 +438,8 @@ def simular(dias, j, k):
 
     simular_evento = {
         "inicio_verde": simular_inicio_verde,
-        "llegada_auto": simular_llegada_auto
+        "llegada_auto": simular_llegada_auto,
+        "fin_cruce": simular_fin_cruce
     }
 
     tabla = []
@@ -440,7 +458,7 @@ def simular(dias, j, k):
         experimento = limpiar_objetos(experimento)
 
         # Restablecer valores no necesarios del vector
-        experimento = limpiar_experimento(experimento)
+        #experimento = limpiar_experimento(experimento)
 
         # Simular evento y actualizar vector
         experimento["eventos"]["hora"] = t

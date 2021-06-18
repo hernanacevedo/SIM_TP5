@@ -57,16 +57,13 @@ $(document).ready(function(){
 
     // Manejo de eventos
     socket.onmessage = function(event) {
-
+        var data = JSON.parse(event.data);
         // ws-test
-        if(event.data == "OK") {
+        if (data == "OK") {
             show_connected();
-        }
-
-        // calcular_simulacion
-        if(event.data != "OK") {
+            console.log("conectado!!!")
+        } else {
             // Obtener datos
-            var data = JSON.parse(event.data);
             //data = JSON.stringify(data)
 
             //var result = data[0].toFixed(2);
